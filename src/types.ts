@@ -152,7 +152,8 @@ export type ThinkingLevel =
   | "low"
   | "medium"
   | "high"
-  | "xhigh";
+  | "xhigh"
+  | "max";
 
 /** Last values written by presets-plus inside the active overlay. */
 interface LastAppliedPresetEffects {

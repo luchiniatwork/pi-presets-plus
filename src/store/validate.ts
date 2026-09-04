@@ -23,6 +23,7 @@ const THINKING_LEVELS: readonly ThinkingLevel[] = [
   "medium",
   "high",
   "xhigh",
+  "max",
 ] as const;
 
 /**

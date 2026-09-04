@@ -14,6 +14,7 @@ const ALL_THINKING_LEVELS: readonly ThinkingLevel[] = [
   "medium",
   "high",
   "xhigh",
+  "max",
 ] as const;
 
 /** Return the level pi will effectively use for the preset/model pair. */
@@ -32,9 +33,9 @@ export function effectiveThinkingLevel(
  * `model.reasoning === false` is authoritative and allows only `"off"`.
  * Reasoning models mirror pi-ai's supported-level parser: a level is
  * unsupported when the map explicitly stores `null`; missing keys fall through
- * to provider defaults for levels through `"high"`; `"xhigh"` must be
- * explicitly mapped to a non-null value. Optional-chained reads keep older
- * pi-ai bundles that predate `thinkingLevelMap` on the legacy up-to-high
+ * to provider defaults for levels through `"high"`; `"xhigh"` and `"max"`
+ * must be explicitly mapped to a non-null value. Optional-chained reads keep
+ * older pi-ai bundles that predate `thinkingLevelMap` on the legacy up-to-high
  * behavior.
  */
 export function validThinkingLevels(
@@ -47,7 +48,7 @@ export function validThinkingLevels(
     const mapped = model.thinkingLevelMap?.[level];
 
     if (mapped === null) return false;
-    if (level === "xhigh") return mapped !== undefined;
+    if (level === "xhigh" || level === "max") return mapped !== undefined;
 
     return true;
   });

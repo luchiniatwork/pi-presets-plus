@@ -22,6 +22,7 @@ const THINKING_LEVELS = [
   "medium",
   "high",
   "xhigh",
+  "max",
 ] as const satisfies readonly ThinkingLevel[];
 
 export function makeThinkingRow(host: EditorRowHost): EditorRow {

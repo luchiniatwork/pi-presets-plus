@@ -87,6 +87,7 @@ describe("validatePresetShape", () => {
       "medium",
       "high",
       "xhigh",
+      "max",
     ] as const) {
       expect(
         validatePresetShape({ ...minimalPreset, thinkingLevel: level }).ok,
