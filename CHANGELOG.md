@@ -2,12 +2,6 @@
 
 This changelog follows [Common Changelog](https://common-changelog.org/).
 
-## [Unreleased]
-
-### Added
-
-- Added support for Pi's `max` thinking level. Using `max` requires Pi 0.80.6 or later. Existing thinking levels remain available on Pi 0.80.5.
-
 ## [0.6.1] - 2026-09-05
 
 ### Fixed

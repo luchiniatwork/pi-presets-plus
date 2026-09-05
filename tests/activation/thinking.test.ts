@@ -127,6 +127,15 @@ describe("thinking helpers", () => {
     ).toEqual([]);
   });
 
+  it("predicts Pi's clamp when off is unavailable", () => {
+    expect(
+      effectiveThinkingLevel(
+        { ...basePreset, thinkingLevel: "max" },
+        model(true, { max: null, off: null }),
+      ),
+    ).toBe("minimal");
+  });
+
   it("keeps omitted thinking level off for non-reasoning models", () => {
     expect(effectiveThinkingLevel(basePreset, model(false))).toBe("off");
   });

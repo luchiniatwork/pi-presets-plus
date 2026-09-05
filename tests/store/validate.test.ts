@@ -174,6 +174,54 @@ describe("computeClampWarning", () => {
     ).toBe(false);
   });
 
+  it("returns true when max is not explicitly mapped", () => {
+    const ctx = makeCtx({
+      models: {
+        anthropic: { "claude-opus-4.5": { hasKey: true, reasoning: true } },
+      },
+    });
+
+    expect(
+      computeClampWarning({ ...availabilityProbe, thinkingLevel: "max" }, ctx),
+    ).toBe(true);
+  });
+
+  it("returns false when max is explicitly mapped", () => {
+    const ctx = makeCtx({
+      models: {
+        anthropic: {
+          "claude-opus-4.5": {
+            hasKey: true,
+            reasoning: true,
+            thinkingLevelMap: { max: "max" },
+          },
+        },
+      },
+    });
+
+    expect(
+      computeClampWarning({ ...availabilityProbe, thinkingLevel: "max" }, ctx),
+    ).toBe(false);
+  });
+
+  it("returns true when max is explicitly unavailable", () => {
+    const ctx = makeCtx({
+      models: {
+        anthropic: {
+          "claude-opus-4.5": {
+            hasKey: true,
+            reasoning: true,
+            thinkingLevelMap: { max: null },
+          },
+        },
+      },
+    });
+
+    expect(
+      computeClampWarning({ ...availabilityProbe, thinkingLevel: "max" }, ctx),
+    ).toBe(true);
+  });
+
   it("returns true for a non-reasoning model with non-off thinking", () => {
     const ctx = makeCtx({
       models: {

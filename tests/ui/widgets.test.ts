@@ -149,6 +149,22 @@ describe("preset widget formatting", () => {
     expect(lines.join("\n")).toContain("<thinkingXhigh>Max</thinkingXhigh>");
   });
 
+  it("does not hide unrelated max color errors", () => {
+    const brokenTheme: Pick<Theme, "fg" | "bold"> = {
+      bold: (text) => text,
+      fg: () => {
+        throw new Error("Theme renderer failed.");
+      },
+    };
+
+    expect(() =>
+      presetCard({ ...basePreset, thinkingLevel: "max" }, brokenTheme, {
+        active: false,
+        selected: false,
+      }).render(120),
+    ).toThrow("Theme renderer failed.");
+  });
+
   it("renders readable key/value card combinations for visual smoke coverage", () => {
     const lines = presetCard(
       {

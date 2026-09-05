@@ -68,3 +68,62 @@ The validity check SHALL access `thinkingLevelMap` defensively so that pi-ai ver
 - **THEN** the rendered output SHALL NOT contain any text of the form `"<model> does not support extended thinking"` or any other inline notice produced by the snap
 - **AND** the rendered output SHALL contain the new branched dimmed-levels hint, reading `"This model does not support thinking."`
 - **AND** the Thinking row's radio SHALL show `● off` with every other level visually dimmed
+
+### Requirement: Thinking-level clamp warning at load time
+
+For each loaded preset whose `thinkingLevel` is non-`"off"` and whose resolved model would clamp that level (the level is not in `validThinkingLevels(model)`), the package SHALL tag the in-memory preset with `clampWarning: true`. The preset SHALL still load and remain available for activation (no fail). The user's preset file SHALL NOT be modified by the package.
+
+#### Scenario: Reasoning model with no thinkingLevelMap and non-xhigh non-off level
+
+- **WHEN** a preset declares `thinkingLevel: "high"` and its resolved model has `reasoning: true` and no `thinkingLevelMap`
+- **THEN** the preset SHALL NOT carry a `clampWarning` flag
+
+#### Scenario: Reasoning model with no thinkingLevelMap and xhigh level
+
+- **WHEN** a preset declares `thinkingLevel: "xhigh"` and its resolved model has `reasoning: true` and no `thinkingLevelMap`
+- **THEN** the preset SHALL carry `clampWarning: true`
+- **AND** the preset SHALL still load and remain available for activation
+
+#### Scenario: Reasoning model with no thinkingLevelMap and max level
+
+- **WHEN** a preset declares `thinkingLevel: "max"` and its resolved model has `reasoning: true` and no `thinkingLevelMap`
+- **THEN** the preset SHALL carry `clampWarning: true`
+- **AND** the preset SHALL still load and remain available for activation
+
+#### Scenario: Reasoning model with the requested non-xhigh level absent from thinkingLevelMap
+
+- **WHEN** a preset declares `thinkingLevel: "low"` and its resolved model has `thinkingLevelMap: { "xhigh": "max" }` (key absent)
+- **THEN** the preset SHALL NOT carry a `clampWarning` flag (missing keys fall through to provider defaults)
+
+#### Scenario: Reasoning model maps max to a non-null value
+
+- **WHEN** a preset declares `thinkingLevel: "max"` and its resolved model has `thinkingLevelMap: { "max": "max" }`
+- **THEN** the preset SHALL NOT carry a `clampWarning` flag
+
+#### Scenario: Reasoning model nulling the requested level in thinkingLevelMap
+
+- **WHEN** a preset declares `thinkingLevel: "low"` and its resolved model has `thinkingLevelMap: { "low": null }`
+- **THEN** the preset SHALL carry `clampWarning: true`
+- **AND** the preset SHALL still load and remain available for activation
+
+#### Scenario: Reasoning model nulling max in thinkingLevelMap
+
+- **WHEN** a preset declares `thinkingLevel: "max"` and its resolved model has `thinkingLevelMap: { "max": null }`
+- **THEN** the preset SHALL carry `clampWarning: true`
+- **AND** the preset SHALL still load and remain available for activation
+
+#### Scenario: Non-reasoning model with non-off thinking level
+
+- **WHEN** a preset declares `thinkingLevel: "high"` and its resolved model has `reasoning: false`
+- **THEN** the preset SHALL carry `clampWarning: true`
+- **AND** the preset SHALL still load and remain available for activation
+
+#### Scenario: Off thinking level with non-reasoning model
+
+- **WHEN** a preset declares `thinkingLevel: "off"` (or omits the field) and its resolved model has `reasoning: false`
+- **THEN** the preset SHALL NOT carry a `clampWarning` flag
+
+#### Scenario: Unknown model
+
+- **WHEN** a preset's model does not resolve in the registry
+- **THEN** `clampWarning` SHALL NOT be set (the preset is already marked `unavailable: "no-model"`)
